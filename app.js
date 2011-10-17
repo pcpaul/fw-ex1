@@ -20,28 +20,34 @@ Ext.application({
                     ].join("")
                 },
                 
+                //this is the recent blogs page. It uses a tree store to load its data from blog.json
                 {
-                    
+                    xtype: 'nestedlist',
                     title: 'Blog',
                     iconCls: 'star',
-                    xtype: 'list',
+                    cls: 'blog',
+                    displayField: 'title',
                     
-                    itemTpl: '{title}',
-                    store: {
-                        fields: ['title', 'url'],
-                        data: [
-                            { title: 'Ext Schedule 2.0', 
-                              url: 'ext-scheduler-2-0-upgrading-to-ext-js-4' 
-                            },
-                            { title: 'Previewing Sench Touch 2', 
-                              url: 'sench-touch-2-what-to-expect' 
-                            },
-                            { title: 'Sencha Con 2011', 
-                              url: 'senchacon-2011-now-packed-with-more-goodness' 
-                            },
-                            { title: 'Documentation in Ext JS 4', 
-                              url: 'new-ext-js-4-documentation-center' 
-                            }]
+                    store: Ext.create('Ext.data.TreeStore', {
+                        fields: ['title', 'text'],
+                        
+                        root: {},
+                        proxy: {
+                            type: 'ajax',
+                            url: 'blog.json'
+                        }
+                    }),
+                    
+                    //when a leaf node is tapped on this function is called. Whatever we return is shown on the page
+                    //here we show a page containing the blog post's text
+                    getDetailCard: function(node) {
+                        if (node) {
+                            return {
+                                xtype: 'panel',
+                                scrollable: true,
+                                html: node.get('text')
+                            };
+                        }
                     }
                 },
                 
@@ -84,18 +90,10 @@ Ext.application({
                                 this.up('formpanel').submit();
                             }
                         }
-                    
-                    
-                    
-                    
                     ]
-                    
-                        
-                    
-                    
-                
+
                 }
             ]
-        }).setActiveItem(2);
+        });
     }
 });
